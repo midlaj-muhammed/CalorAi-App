@@ -16,7 +16,9 @@
     "deploy": "NODE_ENV=production npx expo export -p web && npx eas-cli@latest deploy",
     "clean": "expo r -c",
     "prebuild": "expo prebuild --clean",
-    "setup-build": "./scripts/setup-build-env.sh"
+    "setup-build": "./scripts/setup-build-env.sh",
+    "analyze-bundle": "./scripts/analyze-bundle.sh",
+    "verify-build": "npm run analyze-bundle && echo 'Bundle analysis complete. Check output for any issues.'"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.12.0",
