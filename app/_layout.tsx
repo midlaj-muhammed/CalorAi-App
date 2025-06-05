@@ -15,15 +15,19 @@ import { NotificationProvider } from '../contexts/NotificationContext';
 import { OnboardingProvider } from '../contexts/OnboardingContext';
 import { SupabaseProvider } from '../contexts/SupabaseContext';
 import { debugPlatform, forceMobile } from '../utils/platformUtils';
+import ErrorBoundary from '../components/ErrorBoundary';
+import SafeAppWrapper from '../components/SafeAppWrapper';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
-const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+// Get Clerk publishable key from environment or app.json extra config
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+  require('../app.json').expo.extra.clerkPublishableKey;
 
 if (!publishableKey) {
   throw new Error(
-    'Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env'
+    'Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env or app.json extra config'
   );
 }
 
@@ -47,64 +51,68 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ClerkProvider publishableKey={publishableKey}>
-      <SupabaseProvider>
-        <OnboardingProvider>
-          <NotificationProvider>
-            <NutritionProvider>
-            <ProgressProvider>
-              <FoodScanProvider>
-                <RecipeProvider>
-                <GestureHandlerRootView style={{ flex: 1 }}>
-                  <SafeAreaProvider>
-                    <PaperProvider>
-                      <Stack
-                        screenOptions={{
-                          headerShown: false,
-                          animation: 'slide_from_right',
-                          animationDuration: 300,
-                        }}
-                      >
-                        <Stack.Screen
-                          name="(onboarding)"
-                          options={{
-                            headerShown: false,
-                            animation: 'fade',
-                          }}
-                        />
-                        <Stack.Screen
-                          name="(auth)"
-                          options={{
-                            headerShown: false,
-                            animation: 'slide_from_bottom',
-                          }}
-                        />
-                        <Stack.Screen
-                          name="(tabs)"
-                          options={{
-                            headerShown: false,
-                            animation: 'fade',
-                          }}
-                        />
-                        <Stack.Screen
-                          name="oauth-native-callback"
-                          options={{
-                            headerShown: false,
-                            animation: 'fade',
-                          }}
-                        />
-                      </Stack>
-                      <StatusBar style="auto" />
-                    </PaperProvider>
-                  </SafeAreaProvider>
-                </GestureHandlerRootView>
-                </RecipeProvider>
-              </FoodScanProvider>
-            </ProgressProvider>
-            </NutritionProvider>
-          </NotificationProvider>
-        </OnboardingProvider>
-      </SupabaseProvider>
-    </ClerkProvider>
+    <SafeAppWrapper>
+      <ErrorBoundary>
+        <ClerkProvider publishableKey={publishableKey}>
+          <SupabaseProvider>
+            <OnboardingProvider>
+              <NotificationProvider>
+                <NutritionProvider>
+                <ProgressProvider>
+                  <FoodScanProvider>
+                    <RecipeProvider>
+                    <GestureHandlerRootView style={{ flex: 1 }}>
+                      <SafeAreaProvider>
+                        <PaperProvider>
+                          <Stack
+                            screenOptions={{
+                              headerShown: false,
+                              animation: 'slide_from_right',
+                              animationDuration: 300,
+                            }}
+                          >
+                            <Stack.Screen
+                              name="(onboarding)"
+                              options={{
+                                headerShown: false,
+                                animation: 'fade',
+                              }}
+                            />
+                            <Stack.Screen
+                              name="(auth)"
+                              options={{
+                                headerShown: false,
+                                animation: 'slide_from_bottom',
+                              }}
+                            />
+                            <Stack.Screen
+                              name="(tabs)"
+                              options={{
+                                headerShown: false,
+                                animation: 'fade',
+                              }}
+                            />
+                            <Stack.Screen
+                              name="oauth-native-callback"
+                              options={{
+                                headerShown: false,
+                                animation: 'fade',
+                              }}
+                            />
+                          </Stack>
+                          <StatusBar style="auto" />
+                        </PaperProvider>
+                      </SafeAreaProvider>
+                    </GestureHandlerRootView>
+                    </RecipeProvider>
+                  </FoodScanProvider>
+                </ProgressProvider>
+                </NutritionProvider>
+              </NotificationProvider>
+            </OnboardingProvider>
+          </SupabaseProvider>
+        </ClerkProvider>
+      </ErrorBoundary>
+    </SafeAppWrapper>
   );
 }

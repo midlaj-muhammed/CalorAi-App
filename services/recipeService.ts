@@ -22,7 +22,8 @@ class RecipeService {
   private baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
   constructor() {
-    this.apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
+    // Get API key from environment or fallback
+    this.apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY || 'AIzaSyC4jDUKVWZsoR9NdN3qIXqPqAfLHbYX7G8';
   }
 
   private createRecipePrompt(params: RecipeGenerationParams): string {

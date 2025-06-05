@@ -1,7 +1,7 @@
 import { OnboardingData, CalorieCalculationResult } from '../contexts/OnboardingContext';
 
-// API configuration
-const API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+// API configuration with fallback
+const API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || 'AIzaSyC4jDUKVWZsoR9NdN3qIXqPqAfLHbYX7G8';
 const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
 // Activity level multipliers for TDEE calculation

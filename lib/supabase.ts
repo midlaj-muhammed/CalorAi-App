@@ -2,8 +2,9 @@ import { createClient } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Database } from '../types/supabase';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+// Get Supabase configuration from environment or fallback to app.json
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://rktkvalibcljmngkdtva.supabase.co';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrdGt2YWxpYmNsam1uZ2tkdHZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NzEwMjcsImV4cCI6MjA2NDQ0NzAyN30.ZjKp9x9MK1vUNDhdkwYvnbFueAExlhQrx1EWhysbEAg';
 
 // Create Supabase client with AsyncStorage for session persistence
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {

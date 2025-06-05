@@ -130,46 +130,58 @@ export const responsive = {
 export const forceMobile = {
   // Disable web-specific behaviors
   disableWebBehaviors: () => {
-    if (isWeb) {
-      // Disable text selection
-      document.body.style.userSelect = 'none';
-      document.body.style.webkitUserSelect = 'none';
-      
-      // Disable context menu
-      document.addEventListener('contextmenu', (e) => e.preventDefault());
-      
-      // Disable zoom
-      const viewport = document.querySelector('meta[name=viewport]');
-      if (viewport) {
-        viewport.setAttribute('content', 
-          'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
-        );
+    if (isWeb && typeof document !== 'undefined') {
+      try {
+        // Disable text selection
+        document.body.style.userSelect = 'none';
+        document.body.style.webkitUserSelect = 'none';
+
+        // Disable context menu
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Disable zoom
+        const viewport = document.querySelector('meta[name=viewport]');
+        if (viewport) {
+          viewport.setAttribute('content',
+            'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+          );
+        }
+      } catch (error) {
+        console.warn('Failed to disable web behaviors:', error);
       }
     }
   },
-  
+
   // Force mobile viewport
   setMobileViewport: () => {
-    if (isWeb) {
-      const meta = document.createElement('meta');
-      meta.name = 'viewport';
-      meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
-      document.getElementsByTagName('head')[0].appendChild(meta);
+    if (isWeb && typeof document !== 'undefined') {
+      try {
+        const meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+      } catch (error) {
+        console.warn('Failed to set mobile viewport:', error);
+      }
     }
   },
 };
 
 // Debug utilities
 export const debugPlatform = () => {
-  console.log('🔍 Platform Debug Info:', {
-    platform: Platform.OS,
-    version: Platform.Version,
-    isAndroid,
-    isIOS,
-    isWeb,
-    isMobile,
-    screenWidth,
-    screenHeight,
-    userAgent: isWeb ? navigator.userAgent : 'N/A',
-  });
+  try {
+    console.log('🔍 Platform Debug Info:', {
+      platform: Platform.OS,
+      version: Platform.Version,
+      isAndroid,
+      isIOS,
+      isWeb,
+      isMobile,
+      screenWidth,
+      screenHeight,
+      userAgent: (isWeb && typeof navigator !== 'undefined') ? navigator.userAgent : 'N/A',
+    });
+  } catch (error) {
+    console.warn('Failed to debug platform info:', error);
+  }
 };
