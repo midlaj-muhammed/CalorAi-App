@@ -1,15 +1,21 @@
-# 🥗 CalorAi - AI-Powered Nutrition Tracking App
-
 <div align="center">
 
-![CalorAi Logo](./logo.jpg)
+# CALORAI
 
-[![React Native](https://img.shields.io/badge/React%20Native-0.79.3-blue.svg)](https://reactnative.dev/)
-[![Expo](https://img.shields.io/badge/Expo-53.0.10-black.svg)](https://expo.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3.3-blue.svg)](https://www.typescriptlang.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+*Transform your nutrition journey into structured wellness effortlessly.*
 
-**A comprehensive nutrition tracking mobile app with AI-powered food recognition, exercise tracking, and personalized meal planning.**
+![last commit](https://img.shields.io/github/last-commit/midlaj-muhammed/CalorAi-App?style=flat-square&color=4CAF50)
+![TypeScript](https://img.shields.io/badge/TypeScript-94.3%25-blue?style=flat-square)
+![React Native](https://img.shields.io/badge/React%20Native-Mobile-61DAFB?style=flat-square)
+
+*Built with the tools and technologies:*
+
+![React Native](https://img.shields.io/badge/React%20Native-61DAFB?style=flat-square&logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Expo](https://img.shields.io/badge/Expo-000020?style=flat-square&logo=expo&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white)
+![Google AI](https://img.shields.io/badge/Google%20AI-4285F4?style=flat-square&logo=google&logoColor=white)
+![Clerk](https://img.shields.io/badge/Clerk-6C47FF?style=flat-square&logo=clerk&logoColor=white)
 
 [Features](#-features) • [Screenshots](#-screenshots) • [Installation](#-installation) • [Tech Stack](#-tech-stack) • [Build](#-build-instructions)
 
