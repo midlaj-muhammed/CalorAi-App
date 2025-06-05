@@ -18,7 +18,9 @@
     "prebuild": "expo prebuild --clean",
     "setup-build": "./scripts/setup-build-env.sh",
     "analyze-bundle": "./scripts/analyze-bundle.sh",
-    "verify-build": "npm run analyze-bundle && echo 'Bundle analysis complete. Check output for any issues.'"
+    "verify-build": "npm run analyze-bundle && echo 'Bundle analysis complete. Check output for any issues.'",
+    "build:update": "eas update --branch preview --message 'Update from local development'",
+    "build:update:prod": "eas update --branch production --message 'Production update'"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.12.0",
@@ -52,7 +54,8 @@
     "react-native-screens": "4.11.1",
     "react-native-svg": "15.11.2",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-web": "^0.20.0"
+    "react-native-web": "^0.20.0",
+    "expo-updates": "~0.28.14"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
