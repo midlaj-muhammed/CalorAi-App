@@ -43,8 +43,7 @@
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE"
       ],
-      "package": "com.midlajvalappil.calorai",
-      "versionCode": 1,
+
       "allowBackup": false,
       "softwareKeyboardLayoutMode": "pan"
     },

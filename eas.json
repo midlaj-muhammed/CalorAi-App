@@ -8,19 +8,40 @@
       "developmentClient": true,
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug"
+      },
+      "env": {
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_bW9kZXJuLWZvd2wtNTYuY2xlcmsuYWNjb3VudHMuZGV2JA",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://rktkvalibcljmngkdtva.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrdGt2YWxpYmNsam1uZ2tkdHZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NzEwMjcsImV4cCI6MjA2NDQ0NzAyN30.ZjKp9x9MK1vUNDhdkwYvnbFueAExlhQrx1EWhysbEAg",
+        "EXPO_PUBLIC_GEMINI_API_KEY": "AIzaSyC4jDUKVWZsoR9NdN3qIXqPqAfLHbYX7G8"
       }
     },
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "env": {
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_bW9kZXJuLWZvd2wtNTYuY2xlcmsuYWNjb3VudHMuZGV2JA",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://rktkvalibcljmngkdtva.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrdGt2YWxpYmNsam1uZ2tkdHZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NzEwMjcsImV4cCI6MjA2NDQ0NzAyN30.ZjKp9x9MK1vUNDhdkwYvnbFueAExlhQrx1EWhysbEAg",
+        "EXPO_PUBLIC_GEMINI_API_KEY": "AIzaSyC4jDUKVWZsoR9NdN3qIXqPqAfLHbYX7G8"
       }
     },
     "production": {
       "autoIncrement": true,
       "android": {
-        "buildType": "app-bundle"
+        "buildType": "app-bundle",
+        "gradleCommand": ":app:bundleRelease"
+      },
+      "env": {
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_bW9kZXJuLWZvd2wtNTYuY2xlcmsuYWNjb3VudHMuZGV2JA",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://rktkvalibcljmngkdtva.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrdGt2YWxpYmNsam1uZ2tkdHZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NzEwMjcsImV4cCI6MjA2NDQ0NzAyN30.ZjKp9x9MK1vUNDhdkwYvnbFueAExlhQrx1EWhysbEAg",
+        "EXPO_PUBLIC_GEMINI_API_KEY": "AIzaSyC4jDUKVWZsoR9NdN3qIXqPqAfLHbYX7G8"
       }
     }
   },

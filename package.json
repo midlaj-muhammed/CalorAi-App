@@ -4,16 +4,19 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "build:android": "NODE_ENV=production eas build --platform android --profile production",
     "build:android:preview": "NODE_ENV=production eas build --platform android --profile preview",
+    "build:android:dev": "NODE_ENV=development eas build --platform android --profile development",
+    "build:android:clean": "NODE_ENV=production eas build --platform android --profile preview --clear-cache",
     "build:ios": "NODE_ENV=production eas build --platform ios --profile production",
     "build:all": "NODE_ENV=production eas build --platform all --profile production",
     "deploy": "NODE_ENV=production npx expo export -p web && npx eas-cli@latest deploy",
     "clean": "expo r -c",
-    "prebuild": "expo prebuild --clean"
+    "prebuild": "expo prebuild --clean",
+    "setup-build": "./scripts/setup-build-env.sh"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.12.0",
