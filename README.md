@@ -1,6 +1,6 @@
 <div align="center">
 
-# CALORAI
+# 🥗CALORAI-APP(nutrition based health and fitness tracking app)
 
 *Transform your nutrition journey into structured wellness effortlessly.*
 
