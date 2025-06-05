@@ -1,0 +1,2 @@
+# Move the downloaded JSON file to your project root
+mv ~/Downloads/api-0000000000000000000-111111-aaaaaabbbbbb.json ./google-service-account.json

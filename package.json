@@ -1,0 +1,75 @@
+{
+  "name": "calorai",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build:android": "NODE_ENV=production eas build --platform android --profile production",
+    "build:android:preview": "NODE_ENV=production eas build --platform android --profile preview",
+    "build:ios": "NODE_ENV=production eas build --platform ios --profile production",
+    "build:all": "NODE_ENV=production eas build --platform all --profile production",
+    "deploy": "NODE_ENV=production npx expo export -p web && npx eas-cli@latest deploy",
+    "clean": "expo r -c",
+    "prebuild": "expo prebuild --clean"
+  },
+  "dependencies": {
+    "@clerk/clerk-expo": "^2.12.0",
+    "@expo/vector-icons": "^14.1.0",
+    "@react-native-async-storage/async-storage": "2.1.2",
+    "@supabase/supabase-js": "^2.49.9",
+    "expo": "53.0.10",
+    "expo-auth-session": "~6.2.0",
+    "expo-camera": "~16.1.7",
+    "expo-constants": "~17.1.4",
+    "expo-crypto": "^14.1.4",
+    "expo-file-system": "~18.1.10",
+    "expo-haptics": "~14.1.4",
+    "expo-image-picker": "~16.1.4",
+    "expo-linear-gradient": "~14.1.5",
+    "expo-linking": "~7.1.4",
+    "expo-media-library": "~17.1.7",
+    "expo-router": "~5.0.3",
+    "expo-splash-screen": "~0.30.9",
+    "expo-status-bar": "~2.2.3",
+    "expo-web-browser": "^14.1.6",
+    "lottie-react-native": "7.2.2",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-native": "0.79.3",
+    "react-native-chart-kit": "^6.12.0",
+    "react-native-gesture-handler": "~2.24.0",
+    "react-native-paper": "^5.14.5",
+    "react-native-reanimated": "3.17.4",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "4.11.1",
+    "react-native-svg": "15.11.2",
+    "react-native-vector-icons": "^10.2.0",
+    "react-native-web": "^0.20.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@types/react": "^19.0.10",
+    "typescript": "^5.8.3"
+  },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": [
+          "react-native-chart-kit"
+        ],
+        "listUnknownPackages": false
+      }
+    }
+  },
+  "resolutions": {
+    "@react-native-async-storage/async-storage": "2.1.2",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "4.11.1",
+    "react-native-reanimated": "3.17.4",
+    "lottie-react-native": "7.2.2"
+  },
+  "private": true
+}
