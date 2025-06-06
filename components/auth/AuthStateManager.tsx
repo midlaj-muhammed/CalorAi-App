@@ -30,12 +30,38 @@ export function AuthStateManager({ children }: AuthStateManagerProps) {
       try {
         console.log('🔄 Initializing auth state...');
 
-        // Clear all persisted state to start fresh (temporary fix)
-        await AsyncStorage.multiRemove([AUTH_STATE_KEY, ONBOARDING_COMPLETED_KEY]);
-        console.log('🗑️ Cleared all persisted auth state for fresh start');
+        // Load persisted auth state and onboarding completion status
+        const [persistedAuthState, persistedOnboardingCompleted] = await AsyncStorage.multiGet([
+          AUTH_STATE_KEY,
+          ONBOARDING_COMPLETED_KEY
+        ]);
+
+        if (persistedAuthState[1]) {
+          try {
+            const authState = JSON.parse(persistedAuthState[1]);
+            console.log('📱 Restored persisted auth state:', authState);
+          } catch (parseError) {
+            console.warn('⚠️ Failed to parse persisted auth state, clearing it');
+            await AsyncStorage.removeItem(AUTH_STATE_KEY);
+          }
+        }
+
+        if (persistedOnboardingCompleted[1]) {
+          try {
+            const onboardingCompleted = JSON.parse(persistedOnboardingCompleted[1]);
+            console.log('📱 Restored persisted onboarding status:', onboardingCompleted);
+
+            // Load onboarding data to sync with persisted state
+            await loadOnboardingData();
+          } catch (parseError) {
+            console.warn('⚠️ Failed to parse persisted onboarding state, clearing it');
+            await AsyncStorage.removeItem(ONBOARDING_COMPLETED_KEY);
+          }
+        }
 
         setAuthStateLoaded(true);
         setIsInitializing(false);
+        console.log('✅ Auth state initialization complete');
       } catch (error) {
         console.error('❌ Error initializing auth state:', error);
         setIsInitializing(false);
@@ -44,7 +70,7 @@ export function AuthStateManager({ children }: AuthStateManagerProps) {
     };
 
     initializeAuthState();
-  }, []);
+  }, [loadOnboardingData]);
 
   // Persist auth state when it changes
   useEffect(() => {

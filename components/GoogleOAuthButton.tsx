@@ -94,14 +94,24 @@ export function GoogleOAuthButton({
         return;
       }
 
-      const { createdSessionId, setActive } = await startOAuthFlow();
+      console.log('🔄 Starting Google OAuth flow...');
+      const { createdSessionId, setActive, signIn, signUp } = await startOAuthFlow({
+        redirectUrl: 'calorai://oauth-native-callback',
+      });
 
       if (createdSessionId) {
         // Set the session as active
         await setActive!({ session: createdSessionId });
+        console.log('✅ OAuth session created and activated');
 
-        // The OAuth flow will automatically redirect to the callback route
-        // No need to manually navigate here
+        // Navigate to OAuth callback to handle post-authentication logic
+        router.replace('/oauth-native-callback');
+      } else if (signIn || signUp) {
+        // Handle cases where additional steps are required
+        console.log('🔄 OAuth flow requires additional steps');
+        router.replace('/oauth-native-callback');
+      } else {
+        throw new Error('OAuth flow did not complete successfully');
       }
 
       setIsLoading(false);
@@ -109,14 +119,25 @@ export function GoogleOAuthButton({
       setIsLoading(false);
       console.error('OAuth error', err);
 
-      // More specific error handling
-      const errorMessage = err?.errors?.[0]?.message ||
-                          err?.message ||
-                          'Failed to sign in with Google. Please try again.';
+      // More specific error handling for deep link issues
+      let errorMessage = 'Failed to sign in with Google. Please try again.';
+
+      if (err?.message?.includes('deep link') || err?.message?.includes('scheme')) {
+        errorMessage = 'Authentication setup issue detected. Please contact support or try again later.';
+        console.error('🚨 Deep link configuration error:', err);
+      } else if (err?.errors?.[0]?.message) {
+        errorMessage = err.errors[0].message;
+      } else if (err?.message) {
+        errorMessage = err.message;
+      }
 
       Alert.alert(
         'Authentication Error',
-        errorMessage
+        errorMessage,
+        [
+          { text: 'OK', style: 'default' },
+          { text: 'Try Again', onPress: handleGoogleSignIn, style: 'cancel' }
+        ]
       );
     }
   }, [startOAuthFlow, isLoaded, isSignedIn, router]);

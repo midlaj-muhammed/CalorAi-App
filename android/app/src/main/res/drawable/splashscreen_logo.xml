@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- Background Circle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.2"
+        android:pathData="M60,60m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
+    
+    <!-- CalorAi Logo - Stylized Salad Bowl -->
+    <group android:translateX="60" android:translateY="60">
+        <!-- Bowl -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M-25,-10 Q-25,15 0,20 Q25,15 25,-10 Q20,-15 0,-15 Q-20,-15 -25,-10 Z" />
+        
+        <!-- Lettuce Leaves -->
+        <path
+            android:fillColor="#81C784"
+            android:pathData="M-15,-8 Q-20,-12 -10,-15 Q-5,-12 -8,-8 Q-12,-5 -15,-8 Z" />
+        
+        <path
+            android:fillColor="#A5D6A7"
+            android:pathData="M5,-10 Q0,-14 10,-16 Q15,-13 12,-9 Q8,-6 5,-10 Z" />
+        
+        <!-- Tomato -->
+        <circle
+            android:fillColor="#F44336"
+            android:cx="-8"
+            android:cy="-2"
+            android:radius="3" />
+        
+        <!-- Carrot -->
+        <path
+            android:fillColor="#FF9800"
+            android:pathData="M8,-5 L12,-3 L10,2 L6,0 Z" />
+        
+        <!-- Fork -->
+        <group android:translateX="18" android:translateY="-8">
+            <path
+                android:fillColor="#FFFFFF"
+                android:strokeColor="#E0E0E0"
+                android:strokeWidth="1"
+                android:pathData="M0,0 L0,12 M-2,0 L-2,8 M2,0 L2,8" />
+        </group>
+    </group>
+    
+    <!-- Subtle Shadow -->
+    <path
+        android:fillColor="#000000"
+        android:fillAlpha="0.1"
+        android:pathData="M60,110m-48,0a48,48 0,1 1,96 0a48,48 0,1 1,-96 0" />
+</vector>
