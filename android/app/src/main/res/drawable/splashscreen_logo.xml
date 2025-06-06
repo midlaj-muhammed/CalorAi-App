@@ -28,10 +28,8 @@
             android:pathData="M4,-8 Q0,-12 8,-14 Q12,-11 10,-7 Q6,-4 4,-8 Z" />
 
         <!-- Tomato -->
-        <circle
+        <path
             android:fillColor="#F44336"
-            android:cx="-6"
-            android:cy="-1"
-            android:radius="2.5" />
+            android:pathData="M-6,-1m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0" />
     </group>
 </vector>
