@@ -3,54 +3,12 @@
     "name": "CalorAi",
     "slug": "calorai",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#4CAF50"
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSCameraUsageDescription": "CalorAi needs camera access to scan and recognize food items for nutrition tracking.",
-        "NSPhotoLibraryUsageDescription": "CalorAi needs photo library access to save scanned food images.",
-        "ITSAppUsesNonExemptEncryption": false
-      },
-      "bundleIdentifier": "com.midlajvalappil.calorai"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#4CAF50"
-      },
-      "splash": {
-        "image": "./assets/splash.png",
-        "resizeMode": "cover",
-        "backgroundColor": "#4CAF50",
-        "imageWidth": 200,
-        "imageHeight": 200
-      },
-      "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.CAMERA",
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.RECORD_AUDIO"
-      ],
-      "package": "com.midlajvalappil.calorai"
-    },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "scheme": "calorai",
     "extra": {
       "clerkPublishableKey": "pk_test_bW9kZXJuLWZvd2wtNTYuY2xlcmsuYWNjb3VudHMuZGV2JA",
       "router": {},
@@ -58,22 +16,6 @@
         "projectId": "d7a34221-476b-43a8-a722-bf1c7bac674e"
       }
     },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "CalorAi needs camera access to scan and recognize food items for nutrition tracking."
-        }
-      ],
-      [
-        "expo-media-library",
-        {
-          "photosPermission": "CalorAi needs photo library access to save scanned food images.",
-          "savePhotosPermission": "CalorAi needs permission to save scanned food images to your photo library."
-        }
-      ]
-    ],
     "owner": "midlajvalappil",
     "runtimeVersion": "1.0.0",
     "updates": {
