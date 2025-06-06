@@ -30,35 +30,9 @@ yarn-error.*
 *.pem
 
 # local env files
-.env
 .env*.local
 
 # typescript
 *.tsbuildinfo
-
-# Build artifacts and large files
-*.aab
-*.apk
-*.ipa
-
-# Sensitive files and credentials
-*service-account*.json
-*credentials*.json
-google-service-account.json
-calorai-b25c5-*.json
-
-# IDE and editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Logs
-logs/
-*.log
-
-# Cache directories
-.cache/
-.tmp/
 
 app-example

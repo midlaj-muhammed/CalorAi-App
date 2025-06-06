@@ -40,17 +40,12 @@
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.RECORD_AUDIO",
-        "android.permission.INTERNET",
-        "android.permission.ACCESS_NETWORK_STATE",
         "android.permission.CAMERA",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.INTERNET",
-        "android.permission.ACCESS_NETWORK_STATE"
+        "android.permission.RECORD_AUDIO"
       ],
-      "allowBackup": false,
-      "softwareKeyboardLayoutMode": "pan"
+      "package": "com.midlajvalappil.calorai"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -65,7 +60,6 @@
     },
     "plugins": [
       "expo-router",
-      "expo-updates",
       [
         "expo-camera",
         {

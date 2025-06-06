@@ -39,10 +39,9 @@ class GeminiService {
   private baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
   constructor() {
-    // Get API key from environment or fallback
-    this.apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY || 'AIzaSyC4jDUKVWZsoR9NdN3qIXqPqAfLHbYX7G8';
-    if (!this.apiKey || this.apiKey === 'AIzaSyC4jDUKVWZsoR9NdN3qIXqPqAfLHbYX7G8') {
-      console.warn('Gemini API key not properly configured. Food recognition may have limited functionality.');
+    this.apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
+    if (!this.apiKey) {
+      console.warn('Gemini API key not found. Food recognition will not work.');
     }
   }
 
