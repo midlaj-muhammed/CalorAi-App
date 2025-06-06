@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAuth } from '@clerk/clerk-expo';
+import { useAuth, useUser } from '@clerk/clerk-expo';
 import { useOnboarding } from '../contexts/OnboardingContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,7 +10,8 @@ const AUTH_STATE_KEY = '@calorAi_auth_state';
 const ONBOARDING_COMPLETED_KEY = '@calorAi_onboarding_completed';
 
 export default function OAuthCallbackScreen() {
-  const { isSignedIn, isLoaded, user } = useAuth();
+  const { isSignedIn, isLoaded, userId } = useAuth();
+  const { user } = useUser();
   const { data: onboardingData, completeOnboarding, isLoading: onboardingLoading } = useOnboarding();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(true);
@@ -22,15 +23,15 @@ export default function OAuthCallbackScreen() {
       try {
         console.log('🔄 Processing OAuth callback...', {
           isSignedIn,
-          userId: user?.id,
+          userId,
           onboardingCompleted: onboardingData.completed
         });
 
-        if (isSignedIn && user?.id) {
+        if (isSignedIn && userId) {
           // Persist authentication state
           const authState = {
             isSignedIn,
-            userId: user.id,
+            userId,
             timestamp: Date.now(),
           };
           await AsyncStorage.setItem(AUTH_STATE_KEY, JSON.stringify(authState));
@@ -64,7 +65,7 @@ export default function OAuthCallbackScreen() {
     // Add a small delay to ensure smooth transition
     const timer = setTimeout(handleOAuthCallback, 1000);
     return () => clearTimeout(timer);
-  }, [isLoaded, isSignedIn, user?.id, onboardingData.completed, onboardingLoading]);
+  }, [isLoaded, isSignedIn, userId, onboardingData.completed, onboardingLoading, completeOnboarding, router]);
 
   return (
     <LinearGradient
@@ -97,39 +98,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-  useEffect(() => {
-    if (!isLoaded || onboardingLoading) return;
-
-    // Add a small delay to ensure the OAuth flow is complete
-    const timer = setTimeout(async () => {
-      if (isSignedIn) {
-        // User is authenticated via OAuth
-        // If they came from onboarding flow, complete it
-        if (!onboardingData.completed && onboardingData.dailyCalorieGoal) {
-          await completeOnboarding();
-        }
-
-        // Redirect to dashboard
-        router.replace('/(tabs)');
-      } else {
-        // If not signed in, redirect back to auth
-        router.replace('/(auth)/sign-in');
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [isSignedIn, isLoaded, onboardingData.completed, onboardingData.dailyCalorieGoal, onboardingLoading, router]);
-
-  // Show loading screen while processing OAuth callback
-  return (
-    <View style={{ 
-      flex: 1, 
-      justifyContent: 'center', 
-      alignItems: 'center',
-      backgroundColor: '#ffffff'
-    }}>
-      <ActivityIndicator size="large" color="#4CAF50" />
-    </View>
-  );
-}
