@@ -36,10 +36,14 @@ export function AuthStateManager({ children }: AuthStateManagerProps) {
           ONBOARDING_COMPLETED_KEY
         ]);
 
+        let hasPersistedAuth = false;
+        let hasPersistedOnboarding = false;
+
         if (persistedAuthState[1]) {
           try {
             const authState = JSON.parse(persistedAuthState[1]);
             console.log('📱 Restored persisted auth state:', authState);
+            hasPersistedAuth = true;
           } catch (parseError) {
             console.warn('⚠️ Failed to parse persisted auth state, clearing it');
             await AsyncStorage.removeItem(AUTH_STATE_KEY);
@@ -50,6 +54,7 @@ export function AuthStateManager({ children }: AuthStateManagerProps) {
           try {
             const onboardingCompleted = JSON.parse(persistedOnboardingCompleted[1]);
             console.log('📱 Restored persisted onboarding status:', onboardingCompleted);
+            hasPersistedOnboarding = onboardingCompleted === true;
 
             // Load onboarding data to sync with persisted state
             await loadOnboardingData();
@@ -57,6 +62,11 @@ export function AuthStateManager({ children }: AuthStateManagerProps) {
             console.warn('⚠️ Failed to parse persisted onboarding state, clearing it');
             await AsyncStorage.removeItem(ONBOARDING_COMPLETED_KEY);
           }
+        }
+
+        // If user has completed onboarding and has auth state, they should go to dashboard
+        if (hasPersistedAuth && hasPersistedOnboarding) {
+          console.log('🎯 User has completed onboarding and has auth state - ready for dashboard');
         }
 
         setAuthStateLoaded(true);
@@ -147,24 +157,38 @@ export function AuthStateManager({ children }: AuthStateManagerProps) {
           navigationKey
         });
 
-        // Simple logic: if user completed onboarding but not signed in, go to sign-in
-        if (!isSignedIn && onboardingData.completed && !inAuthGroup) {
+        // Check persisted onboarding completion status
+        const persistedOnboardingCompleted = await AsyncStorage.getItem(ONBOARDING_COMPLETED_KEY);
+        const isOnboardingCompleted = persistedOnboardingCompleted ? JSON.parse(persistedOnboardingCompleted) : onboardingData.completed;
+
+        console.log('🔍 Navigation decision factors:', {
+          isSignedIn,
+          onboardingDataCompleted: onboardingData.completed,
+          persistedOnboardingCompleted: isOnboardingCompleted,
+          inAuthGroup,
+          inOnboardingGroup,
+          inTabsGroup,
+          inIndexRoute
+        });
+
+        // Priority 1: If user signed in and onboarding completed (either from context or persisted), go to dashboard
+        if (isSignedIn && (onboardingData.completed || isOnboardingCompleted) && !inTabsGroup && !inIndexRoute) {
+          console.log('🔄 Redirecting to dashboard - user authenticated and onboarded');
+          router.replace('/(tabs)');
+          return;
+        }
+
+        // Priority 2: If user completed onboarding but not signed in, go to sign-in
+        if (!isSignedIn && (onboardingData.completed || isOnboardingCompleted) && !inAuthGroup) {
           console.log('🔄 Redirecting to sign-in - onboarding completed but user not authenticated');
           router.replace('/(auth)/sign-in');
           return;
         }
 
-        // If user not signed in and onboarding not completed, go to onboarding
-        if (!isSignedIn && !onboardingData.completed && !inOnboardingGroup && !inIndexRoute) {
+        // Priority 3: If user not signed in and onboarding not completed, go to onboarding
+        if (!isSignedIn && !onboardingData.completed && !isOnboardingCompleted && !inOnboardingGroup && !inIndexRoute) {
           console.log('🔄 Redirecting to onboarding - user not signed in and onboarding incomplete');
           router.replace('/(onboarding)/welcome');
-          return;
-        }
-
-        // If user signed in and onboarding completed, go to dashboard
-        if (isSignedIn && onboardingData.completed && !inTabsGroup && !inIndexRoute) {
-          console.log('🔄 Redirecting to dashboard - user authenticated and onboarded');
-          router.replace('/(tabs)');
           return;
         }
 

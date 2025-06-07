@@ -1,35 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
 
-    <!-- Background Circle -->
+    <!-- Background Circle with CalorAi Green -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M100,100m-90,0a90,90 0,1 1,180 0a90,90 0,1 1,-180 0" />
+
+    <!-- Inner White Circle for Logo -->
     <path
         android:fillColor="#FFFFFF"
-        android:fillAlpha="0.3"
-        android:pathData="M54,54m-45,0a45,45 0,1 1,90 0a45,45 0,1 1,-90 0" />
+        android:pathData="M100,100m-60,0a60,60 0,1 1,120 0a60,60 0,1 1,-120 0" />
 
-    <!-- CalorAi Logo - Simplified -->
-    <group android:translateX="54" android:translateY="54">
-        <!-- Bowl -->
+    <!-- CalorAi Logo - Larger and Centered -->
+    <group android:translateX="100" android:translateY="100">
+        <!-- Bowl - Larger -->
         <path
-            android:fillColor="#FFFFFF"
-            android:pathData="M-20,-8 Q-20,12 0,16 Q20,12 20,-8 Q16,-12 0,-12 Q-16,-12 -20,-8 Z" />
+            android:fillColor="#E8F5E8"
+            android:pathData="M-30,-12 Q-30,18 0,24 Q30,18 30,-12 Q24,-18 0,-18 Q-24,-18 -30,-12 Z" />
 
-        <!-- Lettuce -->
+        <!-- Bowl Rim -->
         <path
             android:fillColor="#4CAF50"
-            android:pathData="M-12,-6 Q-16,-10 -8,-12 Q-4,-10 -6,-6 Q-10,-4 -12,-6 Z" />
+            android:pathData="M-30,-12 Q-30,-8 -24,-8 L24,-8 Q30,-8 30,-12 Q24,-18 0,-18 Q-24,-18 -30,-12 Z" />
+
+        <!-- Lettuce - Larger -->
+        <path
+            android:fillColor="#4CAF50"
+            android:pathData="M-18,-9 Q-24,-15 -12,-18 Q-6,-15 -9,-9 Q-15,-6 -18,-9 Z" />
 
         <path
             android:fillColor="#81C784"
-            android:pathData="M4,-8 Q0,-12 8,-14 Q12,-11 10,-7 Q6,-4 4,-8 Z" />
+            android:pathData="M6,-12 Q0,-18 12,-21 Q18,-16.5 15,-10.5 Q9,-6 6,-12 Z" />
 
-        <!-- Tomato -->
+        <!-- Tomato - Larger -->
         <path
             android:fillColor="#F44336"
-            android:pathData="M-6,-1m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0" />
+            android:pathData="M-9,-1.5m-3.75,0a3.75,3.75 0,1 1,7.5 0a3.75,3.75 0,1 1,-7.5 0" />
+
+        <!-- Carrot piece -->
+        <path
+            android:fillColor="#FF9800"
+            android:pathData="M12,6 Q15,3 18,6 Q15,12 12,9 Q12,6 12,6 Z" />
+
+        <!-- App Name Text -->
+        <group android:translateY="35">
+            <path
+                android:fillColor="#4CAF50"
+                android:pathData="M-25,0 Q-25,-8 -17,-8 Q-9,-8 -9,0 Q-9,8 -17,8 Q-25,8 -25,0 Z M-21,0 Q-21,-4 -17,-4 Q-13,-4 -13,0 Q-13,4 -17,4 Q-21,4 -21,0 Z" />
+        </group>
+    </group>
+
+    <!-- CalorAi Text at Bottom -->
+    <group android:translateX="100" android:translateY="170">
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M-30,-6 L-30,6 L-24,6 Q-18,6 -18,0 Q-18,-6 -24,-6 Z M-26,-2 L-22,-2 Q-22,2 -26,2 Z" />
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M-12,-6 L-12,6 L-8,6 L-8,2 L-4,2 L-4,6 L0,6 L0,-6 L-4,-6 L-4,-2 L-8,-2 L-8,-6 Z" />
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M6,-6 L6,6 L10,6 L10,2 L14,2 Q18,2 18,-2 Q18,-6 14,-6 Z M10,-2 L14,-2 Q14,0 10,0 Z" />
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M24,-6 L24,6 L28,6 L28,-6 Z M26,-8 Q28,-8 28,-6 Q28,-4 26,-4 Q24,-4 24,-6 Q24,-8 26,-8 Z" />
     </group>
 </vector>

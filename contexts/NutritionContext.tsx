@@ -498,7 +498,43 @@ export function NutritionProvider({ children }: { children: ReactNode }) {
 
   const addMealEntry = (meal: MealEntry) => {
     dispatch({ type: 'ADD_MEAL_ENTRY', payload: meal });
-    saveDashboardData();
+
+    // Save to storage immediately for persistence
+    try {
+      await saveDashboardData();
+
+      // Also save meal entry separately for better persistence
+      if (user) {
+        const mealKey = `nutrition_${user.id}_${state.currentDate}`;
+        const existingMeals = await AsyncStorage.getItem(mealKey);
+        const mealData = existingMeals ? JSON.parse(existingMeals) : [];
+
+        // Add new meal entry
+        const nutritionEntry = {
+          id: `local_${Date.now()}`,
+          user_id: user.id,
+          date: state.currentDate,
+          meal_type: meal.type,
+          food_name: meal.name,
+          calories: meal.macros.calories,
+          carbs_g: meal.macros.carbs,
+          protein_g: meal.macros.protein,
+          fat_g: meal.macros.fat,
+          quantity: meal.quantity || 1,
+          unit: meal.unit || 'serving',
+          logged_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+
+        mealData.push(nutritionEntry);
+        await AsyncStorage.setItem(mealKey, JSON.stringify(mealData));
+
+        console.log('✅ Meal entry saved to local storage');
+      }
+    } catch (error) {
+      console.error('❌ Error saving meal entry:', error);
+    }
   };
 
   const removeMealEntry = (mealId: string) => {
@@ -509,7 +545,35 @@ export function NutritionProvider({ children }: { children: ReactNode }) {
   const updateWaterIntake = (glasses: number) => {
     const waterInMl = glasses * 250; // 250ml per glass
     dispatch({ type: 'UPDATE_WATER_INTAKE', payload: waterInMl });
-    saveDashboardData();
+
+    // Save to storage immediately for persistence
+    try {
+      await saveDashboardData();
+
+      // Also save water intake separately for better persistence
+      if (user) {
+        const waterKey = `water_${user.id}_${state.currentDate}`;
+        const existingWater = await AsyncStorage.getItem(waterKey);
+        const waterData = existingWater ? JSON.parse(existingWater) : [];
+
+        // Add new water entry for the last glass added
+        const waterEntry = {
+          id: `local_${Date.now()}`,
+          user_id: user.id,
+          date: state.currentDate,
+          amount_ml: 250, // Last glass added
+          logged_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+        };
+
+        waterData.push(waterEntry);
+        await AsyncStorage.setItem(waterKey, JSON.stringify(waterData));
+
+        console.log('✅ Water intake saved to local storage');
+      }
+    } catch (error) {
+      console.error('❌ Error saving water intake:', error);
+    }
   };
 
   const addExerciseSession = (exercise: ExerciseSession) => {
@@ -594,6 +658,53 @@ export function NutritionProvider({ children }: { children: ReactNode }) {
           dispatch({ type: 'SET_DASHBOARD_DATA', payload: updatedDashboardData });
         } else {
           console.log('✅ Goals unchanged, using stored data');
+
+          // Load individual data entries for more accurate data
+          try {
+            const [waterData, mealData] = await Promise.all([
+              AsyncStorage.getItem(`water_${user.id}_${date}`),
+              AsyncStorage.getItem(`nutrition_${user.id}_${date}`)
+            ]);
+
+            // Merge water data
+            if (waterData) {
+              const waterEntries = JSON.parse(waterData);
+              const totalWater = waterEntries.reduce((sum: number, entry: any) => sum + entry.amount_ml, 0);
+              dashboardData.nutrition.waterIntake = totalWater;
+            }
+
+            // Merge meal data
+            if (mealData) {
+              const mealEntries = JSON.parse(mealData);
+              const totalMacros = mealEntries.reduce((sum: any, entry: any) => ({
+                calories: sum.calories + (entry.calories || 0),
+                carbs: sum.carbs + (entry.carbs_g || 0),
+                protein: sum.protein + (entry.protein_g || 0),
+                fat: sum.fat + (entry.fat_g || 0),
+              }), { calories: 0, carbs: 0, protein: 0, fat: 0 });
+
+              dashboardData.nutrition.totalMacros = totalMacros;
+
+              // Convert to meal entries format
+              dashboardData.nutrition.meals = mealEntries.map((entry: any) => ({
+                id: entry.id,
+                name: entry.food_name,
+                type: entry.meal_type,
+                macros: {
+                  calories: entry.calories || 0,
+                  carbs: entry.carbs_g || 0,
+                  protein: entry.protein_g || 0,
+                  fat: entry.fat_g || 0,
+                },
+                quantity: entry.quantity || 1,
+                unit: entry.unit || 'serving',
+                timestamp: new Date(entry.logged_at || entry.created_at),
+              }));
+            }
+          } catch (mergeError) {
+            console.warn('Error merging individual data entries:', mergeError);
+          }
+
           dispatch({ type: 'SET_DASHBOARD_DATA', payload: dashboardData });
         }
       } else {

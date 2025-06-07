@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@clerk/clerk-expo';
 import { useOnboarding } from '../contexts/OnboardingContext';
 import { View, Text, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   useSharedValue,
@@ -45,21 +46,39 @@ export default function Index() {
     if (!isLoaded || onboardingLoading) return;
 
     // Add a small delay for smooth transition
-    const timer = setTimeout(() => {
-      if (!isSignedIn) {
-        // User is not signed in, redirect to onboarding
-        console.log('🔄 User not signed in, redirecting to onboarding');
-        router.replace('/(onboarding)/welcome');
-      } else {
-        // User is signed in, check onboarding status
-        if (onboardingData.completed) {
-          // User is signed in and has completed onboarding
-          console.log('🔄 User authenticated and onboarded, redirecting to dashboard');
-          router.replace('/(tabs)');
+    const timer = setTimeout(async () => {
+      try {
+        // Check persisted onboarding completion status
+        const persistedOnboardingCompleted = await AsyncStorage.getItem('@calorAi_onboarding_completed');
+        const isOnboardingCompleted = persistedOnboardingCompleted ? JSON.parse(persistedOnboardingCompleted) : onboardingData.completed;
+
+        console.log('🔍 Index route decision factors:', {
+          isSignedIn,
+          onboardingDataCompleted: onboardingData.completed,
+          persistedOnboardingCompleted: isOnboardingCompleted
+        });
+
+        if (!isSignedIn) {
+          // User is not signed in, check if they completed onboarding
+          if (isOnboardingCompleted) {
+            // User completed onboarding but not signed in, go to sign-in
+            console.log('🔄 User completed onboarding but not signed in, redirecting to sign-in');
+            router.replace('/(auth)/sign-in');
+          } else {
+            // User hasn't completed onboarding, redirect to onboarding
+            console.log('🔄 User not signed in and onboarding incomplete, redirecting to onboarding');
+            router.replace('/(onboarding)/welcome');
+          }
         } else {
-          // User is signed in but hasn't completed onboarding
-          const currentStep = getCurrentStep();
-          console.log(`🔄 User authenticated but onboarding incomplete, current step: ${currentStep}`);
+          // User is signed in, check onboarding status
+          if (onboardingData.completed || isOnboardingCompleted) {
+            // User is signed in and has completed onboarding
+            console.log('🔄 User authenticated and onboarded, redirecting to dashboard');
+            router.replace('/(tabs)');
+          } else {
+            // User is signed in but hasn't completed onboarding
+            const currentStep = getCurrentStep();
+            console.log(`🔄 User authenticated but onboarding incomplete, current step: ${currentStep}`);
 
           if (currentStep === 'completed') {
             // Edge case: data says completed but flag is false
@@ -81,6 +100,11 @@ export default function Index() {
             router.replace(targetRoute);
           }
         }
+      }
+      } catch (error) {
+        console.error('❌ Error in index navigation:', error);
+        // Fallback to safe route
+        router.replace('/(onboarding)/welcome');
       }
     }, 1500); // Slightly longer delay for better UX
 

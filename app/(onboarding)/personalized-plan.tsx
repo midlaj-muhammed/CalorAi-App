@@ -117,8 +117,16 @@ export default function PersonalizedPlanScreen() {
   };
 
   const handleContinue = async () => {
-    await completeOnboarding();
-    router.push('/(auth)/sign-up');
+    try {
+      await completeOnboarding();
+      console.log('✅ Onboarding completed successfully');
+      // Navigate to sign-up for authentication
+      router.replace('/(auth)/sign-up');
+    } catch (error) {
+      console.error('❌ Error completing onboarding:', error);
+      // Still navigate to sign-up even if there's an error
+      router.replace('/(auth)/sign-up');
+    }
   };
 
   const handleRecalculate = () => {

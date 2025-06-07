@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase, handleSupabaseError, formatDateForDB, getTodayDate, offlineQueue } from '../lib/supabase';
 import {
   UserProfile,
@@ -20,6 +21,76 @@ import {
   UserPreferencesInsert,
   MealType,
 } from '../types/supabase';
+
+// Local Storage Keys
+const STORAGE_KEYS = {
+  WATER_INTAKE: (userId: string, date: string) => `water_${userId}_${date}`,
+  NUTRITION_ENTRIES: (userId: string, date: string) => `nutrition_${userId}_${date}`,
+  DAILY_PROGRESS: (userId: string, date: string) => `progress_${userId}_${date}`,
+  EXERCISE_SESSIONS: (userId: string, date: string) => `exercise_${userId}_${date}`,
+  USER_PROFILE: (userId: string) => `profile_${userId}`,
+  OFFLINE_QUEUE: 'offline_queue',
+} as const;
+
+// Local Storage Service for offline data persistence
+export class LocalStorageService {
+  // Save data to local storage
+  static async saveData<T>(key: string, data: T): Promise<void> {
+    try {
+      await AsyncStorage.setItem(key, JSON.stringify(data));
+      console.log(`✅ Saved data to local storage: ${key}`);
+    } catch (error) {
+      console.error(`❌ Error saving data to local storage (${key}):`, error);
+    }
+  }
+
+  // Load data from local storage
+  static async loadData<T>(key: string): Promise<T | null> {
+    try {
+      const data = await AsyncStorage.getItem(key);
+      if (data) {
+        return JSON.parse(data) as T;
+      }
+      return null;
+    } catch (error) {
+      console.error(`❌ Error loading data from local storage (${key}):`, error);
+      return null;
+    }
+  }
+
+  // Remove data from local storage
+  static async removeData(key: string): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(key);
+      console.log(`🗑️ Removed data from local storage: ${key}`);
+    } catch (error) {
+      console.error(`❌ Error removing data from local storage (${key}):`, error);
+    }
+  }
+
+  // Clear all user data from local storage
+  static async clearUserData(userId: string): Promise<void> {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      const userKeys = keys.filter(key => key.includes(userId));
+      await AsyncStorage.multiRemove(userKeys);
+      console.log(`🗑️ Cleared all user data for: ${userId}`);
+    } catch (error) {
+      console.error(`❌ Error clearing user data:`, error);
+    }
+  }
+
+  // Get all keys for a specific user and date
+  static async getUserDateKeys(userId: string, date: string): Promise<string[]> {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      return keys.filter(key => key.includes(userId) && key.includes(date));
+    } catch (error) {
+      console.error(`❌ Error getting user date keys:`, error);
+      return [];
+    }
+  }
+}
 
 // User Profile Operations
 export class UserProfileService {
@@ -91,6 +162,7 @@ export class UserProfileService {
 export class NutritionService {
   static async addEntry(entryData: NutritionEntryInsert): Promise<NutritionEntry> {
     try {
+      // Try to save to Supabase first
       const { data, error } = await supabase
         .from('nutrition_entries')
         .insert(entryData)
@@ -98,19 +170,52 @@ export class NutritionService {
         .single();
 
       if (error) throw error;
-      
+
+      // Save to local storage for persistence
+      await this.saveToLocalStorage(entryData.user_id, entryData.date, data);
+
       // Update daily progress
       await this.updateDailyProgress(entryData.user_id, entryData.date);
-      
+
       return data;
     } catch (error) {
+      // If Supabase fails, create local entry and queue for sync
+      const localEntry: NutritionEntry = {
+        id: `local_${Date.now()}`,
+        ...entryData,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+      // Save to local storage
+      await this.saveToLocalStorage(entryData.user_id, entryData.date, localEntry);
+
+      // Queue for sync when online
       offlineQueue.add('insert', 'nutrition_entries', entryData);
-      throw handleSupabaseError(error, 'add nutrition entry');
+
+      return localEntry;
     }
+  }
+
+  // Save nutrition entry to local storage
+  static async saveToLocalStorage(userId: string, date: string, entry: NutritionEntry): Promise<void> {
+    const key = STORAGE_KEYS.NUTRITION_ENTRIES(userId, date);
+    const existingData = await LocalStorageService.loadData<NutritionEntry[]>(key) || [];
+
+    // Check if entry already exists (avoid duplicates)
+    const existingIndex = existingData.findIndex(item => item.id === entry.id);
+    if (existingIndex >= 0) {
+      existingData[existingIndex] = entry;
+    } else {
+      existingData.push(entry);
+    }
+
+    await LocalStorageService.saveData(key, existingData);
   }
 
   static async getEntriesByDate(userId: string, date: string): Promise<NutritionEntry[]> {
     try {
+      // Try to get from Supabase first
       const { data, error } = await supabase
         .from('nutrition_entries')
         .select('*')
@@ -119,10 +224,22 @@ export class NutritionService {
         .order('created_at', { ascending: true });
 
       if (error) throw error;
+
+      // Save to local storage for offline access
+      if (data && data.length > 0) {
+        const key = STORAGE_KEYS.NUTRITION_ENTRIES(userId, date);
+        await LocalStorageService.saveData(key, data);
+      }
+
       return data || [];
     } catch (error) {
+      // If Supabase fails, try to load from local storage
+      console.log('🔄 Loading nutrition entries from local storage...');
+      const key = STORAGE_KEYS.NUTRITION_ENTRIES(userId, date);
+      const localData = await LocalStorageService.loadData<NutritionEntry[]>(key);
+
       handleSupabaseError(error, 'get nutrition entries');
-      return [];
+      return localData || [];
     }
   }
 
@@ -243,6 +360,7 @@ export class NutritionService {
 export class WaterService {
   static async addIntake(intakeData: WaterIntakeInsert): Promise<WaterIntake> {
     try {
+      // Try to save to Supabase first
       const { data, error } = await supabase
         .from('water_intake')
         .insert(intakeData)
@@ -250,19 +368,51 @@ export class WaterService {
         .single();
 
       if (error) throw error;
-      
+
+      // Save to local storage for persistence
+      await this.saveToLocalStorage(intakeData.user_id, intakeData.date, data);
+
       // Update daily progress
       await NutritionService.updateDailyProgress(intakeData.user_id, intakeData.date);
-      
+
       return data;
     } catch (error) {
+      // If Supabase fails, create local entry and queue for sync
+      const localEntry: WaterIntake = {
+        id: `local_${Date.now()}`,
+        ...intakeData,
+        created_at: new Date().toISOString(),
+      };
+
+      // Save to local storage
+      await this.saveToLocalStorage(intakeData.user_id, intakeData.date, localEntry);
+
+      // Queue for sync when online
       offlineQueue.add('insert', 'water_intake', intakeData);
-      throw handleSupabaseError(error, 'add water intake');
+
+      return localEntry;
     }
+  }
+
+  // Save water intake to local storage
+  static async saveToLocalStorage(userId: string, date: string, intake: WaterIntake): Promise<void> {
+    const key = STORAGE_KEYS.WATER_INTAKE(userId, date);
+    const existingData = await LocalStorageService.loadData<WaterIntake[]>(key) || [];
+
+    // Check if entry already exists (avoid duplicates)
+    const existingIndex = existingData.findIndex(item => item.id === intake.id);
+    if (existingIndex >= 0) {
+      existingData[existingIndex] = intake;
+    } else {
+      existingData.push(intake);
+    }
+
+    await LocalStorageService.saveData(key, existingData);
   }
 
   static async getDailyIntake(userId: string, date: string): Promise<WaterIntake[]> {
     try {
+      // Try to get from Supabase first
       const { data, error } = await supabase
         .from('water_intake')
         .select('*')
@@ -271,10 +421,22 @@ export class WaterService {
         .order('logged_at', { ascending: true });
 
       if (error) throw error;
+
+      // Save to local storage for offline access
+      if (data && data.length > 0) {
+        const key = STORAGE_KEYS.WATER_INTAKE(userId, date);
+        await LocalStorageService.saveData(key, data);
+      }
+
       return data || [];
     } catch (error) {
+      // If Supabase fails, try to load from local storage
+      console.log('🔄 Loading water intake from local storage...');
+      const key = STORAGE_KEYS.WATER_INTAKE(userId, date);
+      const localData = await LocalStorageService.loadData<WaterIntake[]>(key);
+
       handleSupabaseError(error, 'get daily water intake');
-      return [];
+      return localData || [];
     }
   }
 
@@ -526,6 +688,7 @@ export class RecipeService {
 export class ProgressService {
   static async getDailyProgress(userId: string, date: string): Promise<DailyProgress | null> {
     try {
+      // Try to get from Supabase first
       const { data, error } = await supabase
         .from('daily_progress')
         .select('*')
@@ -534,10 +697,22 @@ export class ProgressService {
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
+
+      // Save to local storage for offline access
+      if (data) {
+        const key = STORAGE_KEYS.DAILY_PROGRESS(userId, date);
+        await LocalStorageService.saveData(key, data);
+      }
+
       return data || null;
     } catch (error) {
+      // If Supabase fails, try to load from local storage
+      console.log('🔄 Loading daily progress from local storage...');
+      const key = STORAGE_KEYS.DAILY_PROGRESS(userId, date);
+      const localData = await LocalStorageService.loadData<DailyProgress>(key);
+
       handleSupabaseError(error, 'get daily progress');
-      return null;
+      return localData || null;
     }
   }
 
